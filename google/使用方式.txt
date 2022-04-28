@@ -63,6 +63,8 @@ Jib将你的应用程序分为多个层，从 classes 中分离依赖项。
 更改代码时，只会重建更改，而不会重建整个应用程序。
 默认情况下，这些层位于 OpenJDK 基础镜像之上（也可以自定义基础镜像）
 
+https://blog.csdn.net/qq_26769513/article/details/102880731
+
 
 
 5.
@@ -109,6 +111,7 @@ https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
 
 构建方式：
 mvn compile jib:build
+（将执行构建，并推送到私服）
 后续构建比初始构建快得多。
 
 
@@ -140,87 +143,10 @@ mvn compile jib:buildTar
 	</execution>
 </executions>
 
-6.6
+6.6(没啥用)
 jib 会写出 image digest 和 image ID，
 默认情况下，会写到 target/jib-image.digest 和 target/jib-image.id
 你可以通过 <outputFiles><digest> and <outputFiles><imageId> 来配置。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-https://blog.csdn.net/qq_26769513/article/details/102880731
-
-
-
-https://blog.csdn.net/poem_2010/article/details/108249860?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&utm_relevant_index=2
-
-https://www.cnblogs.com/dxiaodang/p/14530316.html
-
-<plugin>
-	<groupId>com.google.cloud.tools</groupId>
-	<artifactId>jib-maven-plugin</artifactId>
-	<version>1.8.0</version>
-	<configuration>
-		<!-- 拉取所需的基础镜像 - 这里用于运行springboot项目 -->
-		<from>
-			<image>openjdk:alpine</image>
-		</from>
-		<!-- 最后生成的镜像配置 -->
-		<to>
-			<!-- push docer-hub官方仓库。用户名/镜像名：版本号， -->
-			<image>smallren/xxxx</image>
-			<!-- 如果是阿里云的容器镜像仓库，则使用容器的配置 前缀/命名空间/仓库名 -->
-			<!--<image>registry.cn-chengdu.aliyuncs.com/renbaojia/ctfo</image>-->
-			<tags>
-				<!--版本号-->
-				<tag>1.1.0</tag>
-			</tags>
-			<auth>
-				<!--在docker-hub或者阿里云上的账号和密码-->
-				<username>xxxxx</username>
-				<password>xxxxxx</password>
-			</auth>
-		</to>
-		<container>
-			<!--springboot项目的入口类 ->
-			<mainClass>xx.xx.xxxApplication</mainClass>
-			<useCurrentTimestamp>true</useCurrentTimestamp>
-			<ports>
-				<!--指定镜像端口 , 这里没用 docfile的操作-->
-				<port>80</port>
-			</ports>
-		</container>
-	</configuration>
-	<executions>
-		<execution>
-			<phase>package</phase>
-			<goals>
-				<goal>build</goal>
-			</goals>
-		</execution>
-	</executions>
-</plugin>
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -12,4 +12,87 @@
     <artifactId>google</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <!--打包工具-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+
+            <!--jib-->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+
+                    <!--基础镜像-->
+                    <from>
+                        <image>openjdk:8-jre</image>
+                    </from>
+
+                    <!--推送到哪个私服-->
+                    <to>
+                        <image>192.168.35.158:5000/${project.artifactId}</image>
+                        <tags>
+                            <tag>${project.version}</tag>
+                        </tags>
+
+                        <!--在docker-hub或者阿里云上的账号和密码-->
+                        <!--<auth>
+                            <username>xxxxx</username>
+                            <password>xxxxxx</password>
+                        </auth>-->
+                    </to>
+
+                    <container>
+                        <!--jvm内存参数-->
+                        <jvmFlags>
+                            <jvmFlag>-Xms400m</jvmFlag>
+                            <jvmFlag>-Xmx400m</jvmFlag>
+                        </jvmFlags>
+
+                        <!--配置使用的时区-->
+                        <environment>
+                            <TZ>Asia/Shanghai</TZ>
+                        </environment>
+
+                        <!--暴露的端口-->
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                    </container>
+
+                    <!--私服是http不是https，默认jib不推送到非https的私服-->
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
+                </configuration>
+
+
+
+                <!--绑定到maven的生命周期-->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+
 </project>
