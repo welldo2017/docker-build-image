@@ -1,0 +1,130 @@
+
+
+1.在pom的plugins标签中，引入此插件
+<plugin>
+	<groupId>com.spotify</groupId>
+	<artifactId>dockerfile-maven-plugin</artifactId>
+	<version>1.4.13</version>
+</plugin>
+
+
+
+在 plugin 标签中，引入2个功能：
+a.构建镜像；
+b.推送镜像到仓库
+<executions>
+    <execution>
+        <id>wd1_build</id>
+        <goals>
+            <goal>build</goal>   <!--这里可以添加多个goal-->
+        </goals>
+        <phase>package</phase>
+    </execution>
+    <execution>
+        <id>wd2_push</id>
+        <goals>
+            <goal>push</goal>   <!--这里可以添加多个goal-->
+        </goals>
+        <phase>verify</phase>
+    </execution>
+</executions>
+
+
+1.5
+如果需要“b.推送镜像到仓库”这个功能，为插件配置认证信息，即登录Docker Hub的用户名和密码
+我们使用更安全的方式：
+在maven-settings.xml中配置server
+<servers>
+    <server>
+        <id>docker.io</id>
+        <username>longyonggang</username>
+        <password>xxxx</password>
+    </server>
+
+    <!-- 阿里云私服,for spotify -->
+    <server>
+        <id>registry.cn-shanghai.aliyuncs.com</id>
+        <username>xxxx</username>   <!--这里是阿里云账号-->
+        <password>yyyy</password>   <!--这里是阿里云pwd-->
+    </server>
+</servers>
+
+同时，在 plugin 标签中，引入<configuration>
+<configuration>
+    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+</configuration>
+
+1.6
+直接在pom中配置Docker Hub的用户名和密码，
+<configuration>
+    <!-- useMavenSettingsForAuth不设置，或者为false即可-->
+    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+    <username>xxxx</username>
+    <password>yyyy</password>
+</configuration>
+
+1.7 如果使用registry私服，好像没有密码，无需设置。
+
+
+
+
+1.8
+<configuration>
+    <!-- 阿里云需要命名空间, registry私服不需要 -->
+    <!-- <repository>registry.cn-shanghai.aliyuncs.com/cm-cyy/${project.artifactId}</repository> -->
+    <repository>${docker.alirepo.registry}/${docker.alirepo.namespace}/${project.artifactId}</repository>
+    <tag>3.0</tag>
+
+    <!--buildArgs指定n个变量，传递给Dockerfile，在DF中通过ARG指令进行引用。-->
+    <buildArgs>
+        <!-- ${project.artifactId}-${project.version} -->
+        <!-- 举例: docker-registry-0.0.1-SNAPSHOT-->
+        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+    </buildArgs>
+</configuration>
+
+
+
+2.编写dockerfile，放置位置：必须与pom同级别
+	FROM openjdk:8-jre
+	MAINTAINER cmii-wangduo
+
+	#在pom.xml里通过buildArgs指定的变量，可以在Dockerfile中通过ARG指令引用进
+	#类似于: register-service-spring-boot-CMCC.1.0.3-SNAPSHOT
+	ARG JAR_FILE
+
+	#注意: Do not use ${project.build.directory} as a way to reference your build directory.
+	COPY target/${JAR_FILE} /app.jar
+
+	#只有这里需要改动
+	CMD ["--server.port=6004"]
+	EXPOSE 6004
+	ENTRYPOINT ["java","-jar", "/app.jar"]
+
+
+
+
+
+3.使用服务器端的docker，开放2375端口，
+windows端通过2375端口远程调用docker的api，进行构建工作
+	请参考
+	https://www.cnblogs.com/niceyoo/p/13270224.html
+
+
+
+
+4.windows端配置环境变量
+DOCKER_HOST
+tcp://xxxx:2375
+
+并且需要去idea中 输出 echo %DOCKER_HOST% 进行确认
+(windows端仅靠这个变量，去寻找服务器，和idea-docker插件毫无关系。)
+
+
+
+参考资料：
+https://zhuanlan.zhihu.com/p/90122357
+https://www.cnblogs.com/HushAsy/p/9896196.html
+
+Docker开启远程安全访问	https://www.cnblogs.com/niceyoo/p/13270224.html
+插件部署:	https://www.cnblogs.com/geekdc/p/13524916.html
