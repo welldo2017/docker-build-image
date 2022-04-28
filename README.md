@@ -1,5 +1,5 @@
-#将 java app 构建成 docker 镜像的方式
-######作者:welldo2017
+# 将 java app 构建成 docker 镜像的方式
+###### 作者:welldo2017
 
 ### 1.spotify 公司出品
 1. docker-maven
