@@ -1,0 +1,231 @@
+
+
+
+================================== jib ==================================
+						java image build								||
+						作者：王铎										||
+================================== jib ==================================
+
+
+
+
+1.github地址
+https://github.com/GoogleContainerTools/jib
+
+它是Google开源的maven插件,
+作用：把java应用程序，构建成 镜像
+
+
+
+
+
+3.简介
+Jib为您的Java应用程序构建优化的Docker和OCI镜像，
+而无需Docker守护进程，也无需深入掌握Docker。
+（注：
+OCI，Open Container Initiative即开放容器计划，是一个规范。
+Docker使用OCI规范，但它只涵盖了该规范大约5%的内容，
+Docker是OCI的创始成员，贡献了初始代码库
+）
+
+
+
+3.1 快速部署更改的代码。
+Jib将你的应用程序分为多个层，从 classes 中分离依赖项。
+你不必等待Docker重建整个Java应用程序，只需部署更改的层即可。
+
+3.2 用相同的内容重建镜像，总是会生成相同的镜像。永远不会再触发不必要的更新。
+
+3.3 daemon-less 型构建工具，
+可以不依赖于 Docker Daemon 进行构建镜像
+从Maven或Gradle中创建Docker镜像，并推送到您选择的任意仓库。
+不需要编写 Dockerfile，也不需要调用 docker build/push 命令。
+
+	注1：	com.spotify.dockerfile-maven-plugin
+	这个插件，需要 Dockerfile, 也需要调用 docker build/push 命令。
+
+	注2：	daemon-less 相关：
+	https://www.chenshaowen.com/blog/the-daemon-less-tools-of-kaniko.html
+
+	注3：	常见仓库类型
+	gcr ：谷歌容器仓库； ecr ：amazon仓库；
+	jcr ：jFrog 仓库； ACR ：azure仓库；
+	dockerHub仓库；
+
+
+
+
+
+
+4.原理
+传统上，Java应用程序是通过 jar 包作为单个映像层构建的，
+而Jib的构建策略将Java应用程序分为多个层，以实现更细粒度的增量构建。
+更改代码时，只会重建更改，而不会重建整个应用程序。
+默认情况下，这些层位于 OpenJDK 基础镜像之上（也可以自定义基础镜像）
+
+
+
+5.
+maven插件地址
+https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin
+
+gradle插件地址
+https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
+
+
+
+
+
+
+
+6.使用方式
+6.1 命令型：
+	mvn compile。。 略
+
+
+
+6.2 pom.xml配置型：
+
+<plugins>
+	<plugin>
+		<groupId>com.google.cloud.tools</groupId>
+		<artifactId>jib-maven-plugin</artifactId>
+		<version>3.2.1</version>
+		<configuration>
+			<from>
+				<image>openjdk:alpine</image>
+			</from>
+			<to>
+				<image>gcr.io/my-gcp-project/my-app</image>
+				<tags>
+					<tag>tag2</tag>
+					<tag>latest</tag>
+				</tags>
+			</to>
+		</configuration>
+	</plugin>
+  ...
+</plugins>
+
+构建方式：
+mvn compile jib:build
+后续构建比初始构建快得多。
+
+
+
+6.3
+Jib还可以将您的image直接构建到Docker daemon。
+这将使用docker命令行工具，并要求您的 PATH环境变量 上有可用的 docker。
+（这个相当于linux上开2375端口，调用linux上的doceker，把镜像推送到docker中，而不是推送到仓库中）
+构建方式：
+mvn compile jib:dockerBuild
+
+
+
+6.4 构建到本地硬盘
+您可以通过以下方法将image构建并保存为tar包，并将其保存到磁盘：
+mvn compile jib:buildTar
+会保存到 target目录下。
+
+
+
+
+6.5 绑定生命周期
+<executions>
+	<execution>
+		<phase>package</phase>
+		<goals>
+			<goal>build</goal>
+		</goals>
+	</execution>
+</executions>
+
+6.6
+jib 会写出 image digest 和 image ID，
+默认情况下，会写到 target/jib-image.digest 和 target/jib-image.id
+你可以通过 <outputFiles><digest> and <outputFiles><imageId> 来配置。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://blog.csdn.net/qq_26769513/article/details/102880731
+
+
+
+https://blog.csdn.net/poem_2010/article/details/108249860?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&utm_relevant_index=2
+
+https://www.cnblogs.com/dxiaodang/p/14530316.html
+
+<plugin>
+	<groupId>com.google.cloud.tools</groupId>
+	<artifactId>jib-maven-plugin</artifactId>
+	<version>1.8.0</version>
+	<configuration>
+		<!-- 拉取所需的基础镜像 - 这里用于运行springboot项目 -->
+		<from>
+			<image>openjdk:alpine</image>
+		</from>
+		<!-- 最后生成的镜像配置 -->
+		<to>
+			<!-- push docer-hub官方仓库。用户名/镜像名：版本号， -->
+			<image>smallren/xxxx</image>
+			<!-- 如果是阿里云的容器镜像仓库，则使用容器的配置 前缀/命名空间/仓库名 -->
+			<!--<image>registry.cn-chengdu.aliyuncs.com/renbaojia/ctfo</image>-->
+			<tags>
+				<!--版本号-->
+				<tag>1.1.0</tag>
+			</tags>
+			<auth>
+				<!--在docker-hub或者阿里云上的账号和密码-->
+				<username>xxxxx</username>
+				<password>xxxxxx</password>
+			</auth>
+		</to>
+		<container>
+			<!--springboot项目的入口类 ->
+			<mainClass>xx.xx.xxxApplication</mainClass>
+			<useCurrentTimestamp>true</useCurrentTimestamp>
+			<ports>
+				<!--指定镜像端口 , 这里没用 docfile的操作-->
+				<port>80</port>
+			</ports>
+		</container>
+	</configuration>
+	<executions>
+		<execution>
+			<phase>package</phase>
+			<goals>
+				<goal>build</goal>
+			</goals>
+		</execution>
+	</executions>
+</plugin>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
