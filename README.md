@@ -16,7 +16,7 @@ https://github.com/spotify/dockerfile-maven
 >+  docker daemon（本地/服务器端 都可）  
 >
 >详细使用方式，请参考 本工程的spotify子工程的pom文件，和Dockerfile文件。  
-<a href="../spotify/pom.xml" >使用方式</a>
+<a href="https://github.com/welldo2017/docker-build-image/blob/master/spotify/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F.txt" >使用方式</a>
 
 
 ### 2.Google 公司的产品
@@ -26,7 +26,7 @@ https://github.com/GoogleContainerTools/jib
 >
 >使用方式:  
 请参考 本工程的 google 子工程的pom文件.  
-<a href="../spotify/pom.xml" >使用方式</a>
+<a href="https://github.com/welldo2017/docker-build-image/blob/master/google/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F.txt" >使用方式</a>
 >
 >简介  
 Jib为您的Java应用程序构建优化的Docker和OCI镜像  
