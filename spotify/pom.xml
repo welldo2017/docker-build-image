@@ -16,7 +16,10 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <!--阿里云需要命名空间, 这个私服不需要-->
+        <!--阿里云需要命名空间, 这个私服可以不需要
+        即阿里云的存放目录 xxxx.com/命名空间/spotify:v2
+        registry存放目录 xxxx.com/命名空间(可以不需要)/spotify:v2
+        -->
         <docker.zhfw.registry>192.168.35.158:5000</docker.zhfw.registry>
     </properties>
 
