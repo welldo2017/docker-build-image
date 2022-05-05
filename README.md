@@ -4,18 +4,24 @@
 ### 1.spotify 公司出品
 1. docker-maven
 >Spotify官方已经不再推荐使用该插件  
-此插件，不需要写 Dockerfile，而是将DF中的配置写到插件中，较麻烦。
+此插件，不需要写 Dockerfile，而是将Dockerfile中的配置写到pom文件的插件中，  
+较麻烦。
 
 2.dockerfile-maven
 >git地址：  
 https://github.com/spotify/dockerfile-maven  
-此插件，需要写 Dockerfile，和依赖服务器端的docker daemon
+此插件，需要写 Dockerfile，和依赖服务器端的docker daemon  
+>
+>详细使用方式，请参考 本工程的spotify子工程的pom文件，和Dockerfile文件。
 
 
 ### 2.Google公司出品
-jib
+* jib
 >git地址  
 https://github.com/GoogleContainerTools/jib  
+>
+>使用方式，  
+请参考 本工程的 google 子工程的pom文件.
 >
 >简介  
 Jib为您的Java应用程序构建优化的Docker和OCI镜像  
