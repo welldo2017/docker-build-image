@@ -71,6 +71,13 @@
                         <ports>
                             <port>8080</port>
                         </ports>
+
+
+                        <!--镜像生成时间是50年前，是不对的，改正此问题的方法是加上如下一行。
+                        特别注意，是推送到私服，不是服务器的硬盘，所以，应该去私服查看时间。
+                        -->
+                        <!--<useCurrentTimestamp>true</useCurrentTimestamp>-->
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                     </container>
 
                     <!--私服是http不是https，默认jib不推送到非https的私服-->
